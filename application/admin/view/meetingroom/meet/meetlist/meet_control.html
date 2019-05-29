@@ -1,0 +1,963 @@
+<link href="__CDN__/assets/css/meetcontrol/meetcontrol.css?v={$Think.config.site.version}" rel="stylesheet">
+<link href="__CDN__/assets/css/meetcontrol/components.min.css?v={$Think.config.site.version}" rel="stylesheet">
+<link href="__CDN__/assets/css/meetcontrol/components-md.css?v={$Think.config.site.version}" rel="stylesheet">
+<script src="__CDN__/assets/js/meetcontrol/jquery.min.js?v={$Think.config.site.version}" rel="stylesheet"></script>
+<!--<script src="__CDN__/assets/js/meetcontrol/bootstrap.min.js?v={$Think.config.site.version}" rel="stylesheet"></script>-->
+
+
+<div class="page-bar ng-scope">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="fa fa-home"></i>
+            <a class="ng-binding">01号会议室(70001)</a>
+        </li>
+    </ul>
+</div>
+
+<div class="col-md-12">
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+
+            <div class="col-md-9 col-lg-9 col-sm-9 col-xs-9 padding-left padding-right">
+                <div class="col-md-5 col-lg-5 col-sm-5 col-xs-5 padding-left">
+                    <div class="input-icon right">
+                        <i class="fa fa-search"></i>
+                        <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="query" placeholder="搜索...">
+                    </div>
+                </div>
+                <!--
+                <div class="col-md-7 col-lg-7 col-sm-7 col-xs-7 padding-right">
+                    <div class="text_scrooll_box pull-left">
+                        <ul class="text_scrooll">
+                            <li>
+                                <a href="javascript:;" style="text-decoration: none;cursor: default;">11:12:49
+                                    [苏州会议室 (051500@ketianyun.com)]
+                                    断开</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown dropdown-extended dropdown-notification pull-right">
+                        <div class="dropdown-toggle" id="dropdownLogs" data-toggle="dropdown"
+                             dropdown-menu-hover
+                             data-close-others="true" aria-haspopup="true" aria-expanded="true"
+                             style="margin-top:5px;height: 20px;">
+                            <i class="fa fa-reorder fa-2x" style="line-height: 20px"></i>
+                        </div>
+                        <ul class="dropdown-menu record_list extended tasks" aria-labelledby="dropdownLogs" style="width: 400px;">
+                            <h5>会议日志</h5>
+                            <li><a href="#">11:12:49 [苏州会议室 (051500@ketianyun.com)] 断开</a></li>
+                            <li><a href="#">11:12:15 [苏州会议室 (051500@ketianyun.com)] 连接</a></li>
+                        </ul>
+                    </div>
+                </div>
+                -->
+            </div>
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 padding-right pull-right">
+                <div class="row" style="margin-top: 5px">
+                    <span class="col-md-5" style="padding-left: 0"><!--资源负载：{{meetingInfo.loadPercent ? meetingInfo.loadPercent : 0}}%--></span>
+
+                    <span class="col-md-6">
+                            <div class="progress ng-isolate-scope" value="meetingInfo.loadPercent ? meetingInfo.loadPercent : 0" max="100" style="margin-bottom: 0;margin-top: 5px;height:10px">
+  <div class="progress-bar" ng-class="type &amp;&amp; 'progress-bar-' + type" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" ng-style="{width: (percent < 100 ? percent : 100) + '%'}" aria-valuetext="0%" aria-labelledby="progressbar" ng-transclude="" style="width: 0%;"></div>
+</div>
+                        </span>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-bottom:3px;">
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+                    <table class="table table-light">
+                        <thead class="bg-light-grey">
+                        <tr>
+                            <th style="text-align: center" class="col-lg-3">会议室
+                                <!--&nbsp;<i class="fa" data-ng-class="{true:'fa-caret-down',false:'fa-caret-up'}[roomSort]" data-ng-click="roomOrder()"></i>--></th>
+                            <th style="text-align: center" class="col-lg-1">连接&nbsp;
+                                <i class="fa fa-caret-up" data-ng-class="{true:'fa-caret-down',false:'fa-caret-up'}[connectSort]" data-ng-click="connectOrder()"></i>
+                            </th>
+                            <th style="text-align: center" class="col-lg-1">会场级别</th>
+                            <th style="text-align: center" class="col-lg-1">麦克风</th>
+                            <th style="text-align: center" class="col-lg-1">分屏</th>
+                            <th style="text-align: center" class="col-lg-1">质量&nbsp;
+                                <i class="fa fa-caret-down" data-ng-class="{true:'fa-caret-down',false:'fa-caret-up'}[qualitySort]" data-ng-click="qualityOrder()"></i>
+                            </th>
+                            <th style="text-align: center" class="col-lg-1">双流</th>
+                            <th style="text-align: center" class="col-lg-1">删除</th>
+                            <th style="text-align: center" class="col-lg-1"><i class="fa fa-refresh pull-right" aria-hidden="true" ng-click="refreshRoom()" style="line-height:18px;cursor: pointer"></i>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <tr data-ng-repeat="meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType" class="ng-scope">
+                            <td style="text-align: center" class="center">
+                                <a class="td_text ng-binding" uib-tooltip-html="'<span><b>呼叫地址：</b>89900@ketiancloud.com</span>'" tooltip-class="customClass" data-ng-bind="meetingroom.name">4445</a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-phone red_icon only-phone" data-ng-class="{'green_icon':meetingroom.isConnect===0,'yellow_icon':meetingroom.isConnect===1,'red_icon':meetingroom.isConnect===2}" style="text-decoration:none;" ng-attr-title="{{meetingroom.isConnectTitle}}" data-ng-click="callInOne(meetingroom)" title="连接会议室"></a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-user font-grey-salsa" data-ng-class="{'font-green-jungle':meetingroom.isMain === 1,'font-blue-madison':meetingroom.isMain === 2,'font-grey-salsa':meetingroom.isMain === 0}" title="设置会场级别" style="text-decoration:none;" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="setRoomLevel(meetingroom)" disabled="disabled"></a></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-microphone green_icon" data-ng-class="{true:'green_icon',false:'red_icon'}[meetingroom.isMute ===0]" ng-attr-title="{{meetingroom.isMute === 0?'点击静音':'点击取消静音'}}" style="text-decoration:none;" ng-disabled="meetingroom.isConnect !== 0 || !meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="callMuteOne(meetingroom)" title="点击静音" disabled="disabled"></a></td>
+                            <td style="text-align: center"><img type="image" data-ng-click="layoutOne(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-src="../img/screen_layout/100.gif" style="width: 28px;height: 21px;" src="__CDN__/assets/img/meetcontrol/100.gif" disabled="disabled"></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-check-circle green_icon fa-exclamation-circle red_icon" data-ng-class="{'fa-check-circle green_icon':meetingroom.quality === 1,'fa-exclamation-circle red_icon':!meetingroom.state || meetingroom.state==='disconnected' || meetingroom.quality === 0}" data-ng-click="showQualityModal(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'|| meetingInfo.mcuType === 'CISCO_CONDUCTOR'" style="text-decoration:none;" disabled="disabled"></a></td>
+                            <td style="text-align: center"><i data-ng-show="meetingroom.state &amp;&amp; meetingroom.state==='connected' &amp;&amp; meetingroom.rxVideoPresentation === 1" class="green_icon icon-shuffle ng-hide"></i><span data-ng-show="!meetingroom.state || meetingroom.state==='disconnected' || !meetingroom.rxVideoPresentation || meetingroom.rxVideoPresentation === 0">-</span></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-trash-o grey_icon" style="text-decoration:none;" data-ng-click="deleteOne(meetingroom)"></a></td>
+                        </tr><!-- end ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <!-- ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <tr data-ng-repeat="meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType" class="ng-scope">
+                            <td style="text-align: center" class="center">
+                                <a class="td_text ng-binding" uib-tooltip-html="'<span><b>呼叫地址：</b>89900@ketiancloud.com</span>'" tooltip-class="customClass" data-ng-bind="meetingroom.name">08会议室</a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-phone red_icon only-phone" data-ng-class="{'green_icon':meetingroom.isConnect===0,'yellow_icon':meetingroom.isConnect===1,'red_icon':meetingroom.isConnect===2}" style="text-decoration:none;" ng-attr-title="{{meetingroom.isConnectTitle}}" data-ng-click="callInOne(meetingroom)" title="连接会议室"></a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-user font-grey-salsa" data-ng-class="{'font-green-jungle':meetingroom.isMain === 1,'font-blue-madison':meetingroom.isMain === 2,'font-grey-salsa':meetingroom.isMain === 0}" title="设置会场级别" style="text-decoration:none;" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="setRoomLevel(meetingroom)" disabled="disabled"></a></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-microphone green_icon" data-ng-class="{true:'green_icon',false:'red_icon'}[meetingroom.isMute ===0]" ng-attr-title="{{meetingroom.isMute === 0?'点击静音':'点击取消静音'}}" style="text-decoration:none;" ng-disabled="meetingroom.isConnect !== 0 || !meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="callMuteOne(meetingroom)" title="点击静音" disabled="disabled"></a></td>
+                            <td style="text-align: center"><img type="image" data-ng-click="layoutOne(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-src="../img/screen_layout/100.gif" style="width: 28px;height: 21px;" src="__CDN__/assets/img/meetcontrol/100.gif" disabled="disabled"></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-check-circle green_icon fa-exclamation-circle red_icon" data-ng-class="{'fa-check-circle green_icon':meetingroom.quality === 1,'fa-exclamation-circle red_icon':!meetingroom.state || meetingroom.state==='disconnected' || meetingroom.quality === 0}" data-ng-click="showQualityModal(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'|| meetingInfo.mcuType === 'CISCO_CONDUCTOR'" style="text-decoration:none;" disabled="disabled"></a></td>
+                            <td style="text-align: center"><i data-ng-show="meetingroom.state &amp;&amp; meetingroom.state==='connected' &amp;&amp; meetingroom.rxVideoPresentation === 1" class="green_icon icon-shuffle ng-hide"></i><span data-ng-show="!meetingroom.state || meetingroom.state==='disconnected' || !meetingroom.rxVideoPresentation || meetingroom.rxVideoPresentation === 0">-</span></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-trash-o grey_icon" style="text-decoration:none;" data-ng-click="deleteOne(meetingroom)"></a></td>
+                        </tr><!-- end ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <!-- ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <tr data-ng-repeat="meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType" class="ng-scope">
+                            <td style="text-align: center" class="center">
+                                <a class="td_text ng-binding" uib-tooltip-html="'<span><b>呼叫地址：</b>89900@ketiancloud.com</span>'" tooltip-class="customClass" data-ng-bind="meetingroom.name">09会议室</a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-phone red_icon only-phone" data-ng-class="{'green_icon':meetingroom.isConnect===0,'yellow_icon':meetingroom.isConnect===1,'red_icon':meetingroom.isConnect===2}" style="text-decoration:none;" ng-attr-title="{{meetingroom.isConnectTitle}}" data-ng-click="callInOne(meetingroom)" title="连接会议室"></a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-user font-grey-salsa" data-ng-class="{'font-green-jungle':meetingroom.isMain === 1,'font-blue-madison':meetingroom.isMain === 2,'font-grey-salsa':meetingroom.isMain === 0}" title="设置会场级别" style="text-decoration:none;" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="setRoomLevel(meetingroom)" disabled="disabled"></a></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-microphone green_icon" data-ng-class="{true:'green_icon',false:'red_icon'}[meetingroom.isMute ===0]" ng-attr-title="{{meetingroom.isMute === 0?'点击静音':'点击取消静音'}}" style="text-decoration:none;" ng-disabled="meetingroom.isConnect !== 0 || !meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="callMuteOne(meetingroom)" title="点击静音" disabled="disabled"></a></td>
+                            <td style="text-align: center"><img type="image" data-ng-click="layoutOne(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-src="../img/screen_layout/100.gif" style="width: 28px;height: 21px;" src="__CDN__/assets/img/meetcontrol/100.gif" disabled="disabled"></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-check-circle green_icon fa-exclamation-circle red_icon" data-ng-class="{'fa-check-circle green_icon':meetingroom.quality === 1,'fa-exclamation-circle red_icon':!meetingroom.state || meetingroom.state==='disconnected' || meetingroom.quality === 0}" data-ng-click="showQualityModal(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'|| meetingInfo.mcuType === 'CISCO_CONDUCTOR'" style="text-decoration:none;" disabled="disabled"></a></td>
+                            <td style="text-align: center"><i data-ng-show="meetingroom.state &amp;&amp; meetingroom.state==='connected' &amp;&amp; meetingroom.rxVideoPresentation === 1" class="green_icon icon-shuffle ng-hide"></i><span data-ng-show="!meetingroom.state || meetingroom.state==='disconnected' || !meetingroom.rxVideoPresentation || meetingroom.rxVideoPresentation === 0">-</span></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-trash-o grey_icon" style="text-decoration:none;" data-ng-click="deleteOne(meetingroom)"></a></td>
+                        </tr><!-- end ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <!-- ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <tr data-ng-repeat="meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType" class="ng-scope">
+                            <td style="text-align: center" class="center">
+                                <a class="td_text ng-binding" uib-tooltip-html="'<span><b>呼叫地址：</b>89900@ketiancloud.com</span>'" tooltip-class="customClass" data-ng-bind="meetingroom.name">10会议室</a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-phone red_icon only-phone" data-ng-class="{'green_icon':meetingroom.isConnect===0,'yellow_icon':meetingroom.isConnect===1,'red_icon':meetingroom.isConnect===2}" style="text-decoration:none;" ng-attr-title="{{meetingroom.isConnectTitle}}" data-ng-click="callInOne(meetingroom)" title="连接会议室"></a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-user font-grey-salsa" data-ng-class="{'font-green-jungle':meetingroom.isMain === 1,'font-blue-madison':meetingroom.isMain === 2,'font-grey-salsa':meetingroom.isMain === 0}" title="设置会场级别" style="text-decoration:none;" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="setRoomLevel(meetingroom)" disabled="disabled"></a></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-microphone green_icon" data-ng-class="{true:'green_icon',false:'red_icon'}[meetingroom.isMute ===0]" ng-attr-title="{{meetingroom.isMute === 0?'点击静音':'点击取消静音'}}" style="text-decoration:none;" ng-disabled="meetingroom.isConnect !== 0 || !meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="callMuteOne(meetingroom)" title="点击静音" disabled="disabled"></a></td>
+                            <td style="text-align: center"><img type="image" data-ng-click="layoutOne(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-src="../img/screen_layout/100.gif" style="width: 28px;height: 21px;" src="__CDN__/assets/img/meetcontrol/100.gif" disabled="disabled"></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-check-circle green_icon fa-exclamation-circle red_icon" data-ng-class="{'fa-check-circle green_icon':meetingroom.quality === 1,'fa-exclamation-circle red_icon':!meetingroom.state || meetingroom.state==='disconnected' || meetingroom.quality === 0}" data-ng-click="showQualityModal(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'|| meetingInfo.mcuType === 'CISCO_CONDUCTOR'" style="text-decoration:none;" disabled="disabled"></a></td>
+                            <td style="text-align: center"><i data-ng-show="meetingroom.state &amp;&amp; meetingroom.state==='connected' &amp;&amp; meetingroom.rxVideoPresentation === 1" class="green_icon icon-shuffle ng-hide"></i><span data-ng-show="!meetingroom.state || meetingroom.state==='disconnected' || !meetingroom.rxVideoPresentation || meetingroom.rxVideoPresentation === 0">-</span></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-trash-o grey_icon" style="text-decoration:none;" data-ng-click="deleteOne(meetingroom)"></a></td>
+                        </tr><!-- end ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <!-- ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+                        <tr data-ng-repeat="meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType" class="ng-scope">
+                            <td style="text-align: center" class="center">
+                                <a class="td_text ng-binding" uib-tooltip-html="'<span><b>呼叫地址：</b>89900@ketiancloud.com</span>'" tooltip-class="customClass" data-ng-bind="meetingroom.name">18会议室</a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-phone red_icon only-phone" data-ng-class="{'green_icon':meetingroom.isConnect===0,'yellow_icon':meetingroom.isConnect===1,'red_icon':meetingroom.isConnect===2}" style="text-decoration:none;" ng-attr-title="{{meetingroom.isConnectTitle}}" data-ng-click="callInOne(meetingroom)" title="连接会议室"></a>
+                            </td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-user font-grey-salsa" data-ng-class="{'font-green-jungle':meetingroom.isMain === 1,'font-blue-madison':meetingroom.isMain === 2,'font-grey-salsa':meetingroom.isMain === 0}" title="设置会场级别" style="text-decoration:none;" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="setRoomLevel(meetingroom)" disabled="disabled"></a></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-microphone green_icon" data-ng-class="{true:'green_icon',false:'red_icon'}[meetingroom.isMute ===0]" ng-attr-title="{{meetingroom.isMute === 0?'点击静音':'点击取消静音'}}" style="text-decoration:none;" ng-disabled="meetingroom.isConnect !== 0 || !meetingroom.state || meetingroom.state==='disconnected'" data-ng-click="callMuteOne(meetingroom)" title="点击静音" disabled="disabled"></a></td>
+                            <td style="text-align: center"><img type="image" data-ng-click="layoutOne(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'" data-ng-src="../img/screen_layout/100.gif" style="width: 28px;height: 21px;" src="__CDN__/assets/img/meetcontrol/100.gif" disabled="disabled"></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-check-circle green_icon fa-exclamation-circle red_icon" data-ng-class="{'fa-check-circle green_icon':meetingroom.quality === 1,'fa-exclamation-circle red_icon':!meetingroom.state || meetingroom.state==='disconnected' || meetingroom.quality === 0}" data-ng-click="showQualityModal(meetingroom)" ng-disabled="!meetingroom.state || meetingroom.state==='disconnected'|| meetingInfo.mcuType === 'CISCO_CONDUCTOR'" style="text-decoration:none;" disabled="disabled"></a></td>
+                            <td style="text-align: center"><i data-ng-show="meetingroom.state &amp;&amp; meetingroom.state==='connected' &amp;&amp; meetingroom.rxVideoPresentation === 1" class="green_icon icon-shuffle ng-hide"></i><span data-ng-show="!meetingroom.state || meetingroom.state==='disconnected' || !meetingroom.rxVideoPresentation || meetingroom.rxVideoPresentation === 0">-</span></td>
+                            <td style="text-align: center"><a class="pub_icon fa fa-trash-o grey_icon" style="text-decoration:none;" data-ng-click="deleteOne(meetingroom)"></a></td>
+                        </tr><!-- end ngRepeat: meetingroom in meetingroomList|filter:{'name':query}| orderBy:orderType -->
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+                    <uib-accordion close-others="true"><div role="tablist" class="panel-group" ng-transclude="">
+                        <div class="d2 panel-default panel ng-scope ng-isolate-scope panel-open" ng-class="panelClass || 'panel-default'" uib-accordion-group="" is-open="operOpen">
+                            <div role="tab" id="accordiongroup-26-7950-tab" aria-selected="true" class="panel-heading" ng-keypress="toggleOpen($event)" ng-click="toggleOpen()">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" href="" aria-expanded="true" aria-controls="accordiongroup-26-7950-panel" tabindex="0" class="accordion-toggle" uib-accordion-transclude="heading"><span uib-accordion-header="" ng-class="{'text-muted': isDisabled}" class="ng-binding">
+                                    <i class="fa fa-caret-right ng-scope" ng-class="{'fa-caret-down': operOpen, 'fa-caret-right': !operOpen}" aria-hidden="true"></i><span class="ng-scope meetOp">
+                                    会议操作
+                                </span></span></a>
+                                </h4>
+                            </div>
+                            <div id="page1" aria-labelledby="accordiongroup-26-7950-tab" aria-hidden="false" role="tabpanel" class="panel-collapse collapse in" uib-collapse="!isOpen" aria-expanded="true" style="height: auto;">
+                                <div class="panel-body" ng-transclude="">
+                                    <uib-accordion-heading class="ng-scope"></uib-accordion-heading>
+                                    <div class="row ng-scope">
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="callInAll()" class="fa fa-phone green_icon quanlian" title="会议室全开" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">全连</span>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="hangupAll()" class="fa fa-phone red_icon quanduan" title="会议室全关" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">全断</span>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="unmuteAll()" class="fa fa-microphone green_icon kaimai" title="麦克风全开" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">开麦</span>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="muteAll()" class="fa fa-microphone-slash red_icon jinmai" title="麦克风全禁" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">禁麦</span>
+                                        </div>
+                                    </div>
+                                    <div class="row ng-scope">
+                                        <!--
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10">
+                                            <a class="green_icon fa fa-user"
+                                               ng-class="meeting.mode == 0 ? 'fa-user':'fa-users'"
+                                               data-ng-click="mode(meeting.mode)" title="讨论"
+                                               style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">模式</span>
+                                        </div>
+                                        -->
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="layoutAll()" class="pub_icon fa fa-th green_icon split" title="分屏模式" style="text-decoration:none;height: 14px;line-height: 14px" ng-disabled="false"></a><br>
+                                            <span class="font-size-10">分屏</span>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="showPolling()" class="fa fa-retweet green_icon lunxun" title="轮询设置" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10 ng-binding">轮询</span>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="showMessage()" class="fa fa-font green_icon zimu" title="字幕" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">字幕</span>
+                                        </div>
+                                        <!--
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10"
+                                             style="padding: 0 10px">
+                                            <a class="fa fa-clock-o green_icon"
+                                               title="延时会议" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">延时</span>
+                                        </div>
+                                        -->
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="lockMeeting()" class="fa green_icon fa-unlock-alt jiesuo" ng-class="meetingInfo.locked ? 'fa-lock' : 'fa-unlock-alt'" ng-attr-title="{{meetingInfo.locked ? '点击解锁' : '点击锁定'}}" style="text-decoration:none;" title="点击锁定"></a><br>
+                                            <span class="font-size-10 ng-binding jsText">已解锁</span>
+                                        </div>
+                                    </div>
+                                    <div class="row ng-scope">
+                                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="delayMeeting()" class="fa fa-clock-o green_icon yanshi" title="延时会议" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">延时</span>
+                                        </div>
+
+                                        <div class="col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-6 col-md-3 col-sm-3 col-xs-3 col-lg-3 text-center meet_control_icon_2 margin-bottom-10" style="padding: 0 10px">
+                                            <a data-ng-click="endMeeting()" class="fa fa-power-off red_icon jieshu" title="结束会议" style="text-decoration:none;"></a><br>
+                                            <span class="font-size-10">结束</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d2 panel-default panel ng-scope ng-isolate-scope" ng-class="panelClass || 'panel-default'" uib-accordion-group="" is-open="accordion.infoOpen">
+                            <div role="tab" id="accordiongroup-28-8032-tab" aria-selected="false" class="panel-heading" ng-keypress="toggleOpen($event)" ng-click="toggleOpen()">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="accordiongroup-28-8032-panel" tabindex="0" class="accordion-toggle" uib-accordion-transclude="heading"><span uib-accordion-header="" ng-class="{'text-muted': isDisabled}" class="ng-binding">
+                                    <i class="fa ng-scope fa-caret-right" ng-class="{'fa-caret-down': accordion.infoOpen, 'fa-caret-right': !accordion.infoOpen}" aria-hidden="true"></i><span class="ng-scope meetMessage">
+                                    会议信息
+                                </span></span></a>
+                                </h4>
+                            </div>
+                            <div id="page2" aria-labelledby="accordiongroup-28-8032-tab" aria-hidden="true" role="tabpanel" class="panel-collapse collapse" uib-collapse="!isOpen" aria-expanded="false" style="height: 0px;">
+                                <div class="panel-body" ng-transclude="">
+                                    <uib-accordion-heading class="ng-scope"></uib-accordion-heading>
+                                    <table class="ng-scope">
+                                        <tbody><tr>
+                                            <th style="width: 80px;height: 23px">会议名称 :</th>
+                                            <td class="ng-binding">01号会议室</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="height: 23px">开会时间 :</th>
+                                            <td class="ng-binding">2018-09-18 09:12</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="height: 23px">会议号 :</th>
+                                            <td class="ng-binding">70001</td>
+                                        </tr>
+                                        <!--
+                                        <tr>
+                                            <th style="height: 23px">主持人 :</th>
+                                            <td>{{meetingInfo.host}}</td>
+                                        </tr>
+                                        -->
+                                        <tr>
+                                            <th style="height: 23px">会议室 :</th>
+                                            <td><span style="color: #26C281" title="连接终端数" class="ng-binding">0</span>
+                                                | <span style="color:#e7505a" title="掉线终端数" class="ng-binding">17</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="height: 23px">会议PIN码 :</th>
+                                            <td class="ng-binding"></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="height: 23px">会议时长 :</th>
+                                            <td class="ng-binding">00小时00分钟</td>
+                                        </tr>
+                                        </tbody></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d3 panel-default panel ng-scope ng-isolate-scope" ng-class="panelClass || 'panel-default'" uib-accordion-group="" is-open="accordion.joinOpen">
+                            <div role="tab" id="accordiongroup-30-4129-tab" aria-selected="false" class="panel-heading" ng-keypress="toggleOpen($event)" ng-click="toggleOpen()">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="accordiongroup-30-4129-panel" tabindex="0" class="accordion-toggle" uib-accordion-transclude="heading"><span uib-accordion-header="" ng-class="{'text-muted': isDisabled}" class="ng-binding">
+                                    <i class="fa ng-scope fa-caret-right" ng-class="{'fa-caret-down': accordion.joinOpen, 'fa-caret-right': !accordion.joinOpen}" aria-hidden="true"></i><span class="ng-scope meetJoin">
+                                    加入会议
+                                    </span><i class="fa fa-refresh pull-right ng-scope" aria-hidden="true" ng-click="refreshJoin($event)"></i>
+                                </span></a>
+                                </h4>
+                            </div>
+                            <div id="page3" aria-labelledby="accordiongroup-30-4129-tab" aria-hidden="true" role="tabpanel" class="panel-collapse collapse" uib-collapse="!isOpen" aria-expanded="false" style="height: 0px;">
+                                <div class="panel-body" ng-transclude="">
+                                    <uib-accordion-heading class="ng-scope"></uib-accordion-heading>
+                                    <div class="right ng-scope" style="position: relative;">
+                                        <input class="form-control ng-pristine ng-untouched ng-valid ng-empty" style=" width: 80%" placeholder="搜索..." type="search" data-ng-model="queryRoom">
+                                        <a class="btn btn_shadow green fa fa-plus waihu" data-ng-click="showCallRoomModal()" title="外呼" style="font-size:12px;position:absolute;right:-1px; top:0;"></a>
+
+                                        <div class="scroller_box_h" style="max-height: 290px;margin-top: 5px;padding: 0">
+                                            <ul class="list-group" style="margin-bottom: 5px">
+                                                <!-- ngRepeat: join in joinList | filter:{'name':queryRoom} -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--
+                        <div uib-accordion-group class="panel-default" is-open="accordion.summaryOpen">
+                            <uib-accordion-heading>
+                                <i class="fa"
+                                   ng-class="{'fa-caret-down': accordion.summaryOpen, 'fa-caret-right': !accordion.summaryOpen}"
+                                   aria-hidden="true"></i>
+                                会议纪要
+                            </uib-accordion-heading>
+                            <textarea style="width:100%;height:150px;resize: vertical "></textarea>
+
+                            <div class=" btn-group btn-group-justified">
+                                <a class="btn blue btn_shadow btn-sm" type="button" ng-click="ok()">保存</a>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+                    </uib-accordion>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--删除logo的弹出层-->
+<div class="ui-popup ng-scope ng-isolate-scope ui-popup-show ui-popup-modal ui-popup-focus" aria-labelledby="ui-dialog878465-title" aria-describedby="ui-dialog878465-content" ng-transclude="" ng-if="$$Popup.open &amp;&amp; !$$Popup.notice" modal="" fixed="" close="$$Popup.$close()" tabindex="-1" style="display: none;" role="alertdialog">
+    <div class="ui-dialog">
+        <div class="ui-dialog-header">
+            <button class="ui-dialog-close" aria-label="Close" type="button">
+                <span class="bg_close" aria-hidden="true">×</span>
+            </button>
+            <div class="ui-dialog-title ng-binding ng-scope" id="ui-dialog878465-title" ng-transclude="" dialog-title="" ng-bind="$$Popup.title">提示</div>
+        </div><div class="ui-dialog-body"><div class="ui-dialog-content ng-binding ng-scope" id="ui-dialog878465-content" ng-transclude="" dialog-content="" ng-bind="$$Popup.content">请确认是否需要删除该终端。 终端名：4445</div></div><div class="ui-dialog-footer"><span class="ui-dialog-buttons ng-scope" ng-transclude="" dialog-buttons=""><!-- ngIf: $$Popup.ok --><button ng-if="$$Popup.ok" ng-click="$$Popup.$ok()" class="bg_color ng-binding ng-scope">确定</button><!-- end ngIf: $$Popup.ok --><!-- ngIf: $$Popup.cancel --><button ng-if="$$Popup.cancel" ng-click="$$Popup.$cancel()" class="ng-binding ng-scope bg_quxiao">取消</button><!-- end ngIf: $$Popup.cancel --></span></div></div></div>
+
+<!--分屏弹框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in fenping" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog "><div class="modal-content" uib-modal-transclude=""><div class="modal-header ng-scope" style="margin-top: 200px">
+        <i class="fa fa-times pull-right close-right" ng-click="cancel()" style="cursor: pointer"></i>
+        <h4 class="modal-title" id="modal-title" style="font-size: 14px">选择全局分屏模式</h4>
+    </div>
+        <div class="modal-body ng-scope" id="modal-body">
+            <div class="row" style="margin-bottom: 15px">
+                <div class="col-md-2"><img data-ng-hide="mcuType === 'CISCO_CONDUCTOR'" src="__CDN__/assets/img/meetcontrol/100.gif" ng-class="layoutId == 100 ?'layout':''" data-ng-click="changeLayout(100);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/200.gif" ng-class="layoutId == 200 ?'layout':''" data-ng-click="changeLayout(200);" class="layout"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/300.gif" ng-class="layoutId == 300 ?'layout':''" data-ng-click="changeLayout(300);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/400.gif" ng-class="layoutId == 400 ?'layout':''" data-ng-click="changeLayout(400);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/500.gif" ng-class="layoutId == 500 ?'layout':''" data-ng-click="changeLayout(500);"></div>
+                <div class="col-md-2"><img data-ng-hide="mcuType === 'CISCO_CONDUCTOR'" src="__CDN__/assets/img/meetcontrol/600.gif" ng-class="layoutId == 600 ?'layout':''" data-ng-click="changeLayout(600);"></div>
+            </div>
+            <div class="row" data-ng-hide="mcuType === 'CISCO_CONDUCTOR'">
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/700.gif" ng-class="layoutId == 700 ?'layout':''" data-ng-click="changeLayout(700);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/800.gif" ng-class="layoutId == 800 ?'layout':''" data-ng-click="changeLayout(800);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/900.gif" ng-class="layoutId == 900 ?'layout':''" data-ng-click="changeLayout(900);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/110.gif" ng-class="layoutId == 110 ?'layout':''" data-ng-click="changeLayout(110);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/120.gif" ng-class="layoutId == 120 ?'layout':''" data-ng-click="changeLayout(120);"></div>
+                <div class="col-md-2"><img src="__CDN__/assets/img/meetcontrol/130.gif" ng-class="layoutId == 130 ?'layout':''" data-ng-click="changeLayout(130);"></div>
+            </div>
+        </div>
+
+        <!--
+        <div class="modal-footer">
+            <button class="btn blue btn_shadow" type="button" ng-click="ok()">确定</button>
+            <button class="btn grey btn_shadow" type="button" ng-click="cancel()">取消</button>
+        </div>
+        --></div></div>
+</div>
+
+<!--轮询弹框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in modal1" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" size="lg" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog modal-lg"><div class="modal-content" uib-modal-transclude=""><div class="modal-header ng-scope">
+        <i class="fa fa-times pull-right close-right" ng-click="cancel()" style="cursor: pointer"></i>
+        <h4>
+            会场轮询
+        </h4>
+    </div>
+        <form class="form-horizontal ng-pristine ng-valid ng-scope ng-valid-required" name="polling_form">
+            <div class="modal-body" style="padding-bottom: 0">
+                <div class="form-group">
+
+                    <label class="col-sm-offset-1 col-sm-2 control-label">轮询模式：</label>
+
+                    <div class="icheck-inline col-sm-3">
+                        <label style="padding-right:13px" class="ui-radio">
+                            <input type="radio" ng-model="pollType" name="pollType" value="main" class="ng-pristine ng-untouched ng-valid ng-not-empty"><span></span>主会场轮询
+                        </label>
+                        <label class="ui-radio">
+                            <input type="radio" ng-model="pollType" name="pollType" value="global" class="ng-pristine ng-untouched ng-valid ng-not-empty"><span></span>全局轮询
+                        </label>
+                    </div>
+
+                    <label class="col-sm-2 control-label">间隔时间：</label>
+
+                    <div class="col-sm-2">
+                        <select ng-disabled="currentPollingRoom" ng-model="interval" name="interval" id="interval" class="form-control border_bom ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required" ng-options="x for (x,y) in intervalList" required="" style="  border: none;border-bottom: 1px solid #EFEFEF;padding-left: 0;font-size: 14px;font-weight: normal;color: #333;background-color: #fff;"><option label="5秒" value="number:5" selected="selected">5秒</option><option label="8秒" value="number:8">8秒</option><option label="10秒" value="number:10">10秒</option><option label="15秒" value="number:15">15秒</option></select>
+                    </div>
+                </div>
+                <!-- ngIf: !currentPollingRoom -->
+                <div class="row ng-scope" data-ng-if="!currentPollingRoom" style="margin-bottom: 10px">
+                <!--
+                <div class="col-md-3" data-ng-show="pollType==='main'">
+                    <button type="button" class="btn btn_shadow font-13 col-md-12 border-d"
+                            data-ng-click="screenType='single'"
+                            data-ng-class="{true:'bg-blue',false:'bg-white'}[screenType==='single']"
+                            >单分屏
+                    </button>
+                    <button type="button" class="btn btn_shadow font-13 col-md-12 border-left border-right"
+                            data-ng-click="screenType='quarter'"
+                            data-ng-class="{true:'bg-blue',false:'bg-white'}[screenType==='quarter']"
+                            >四分屏
+                    </button>
+                    <button type="button" class="btn btn_shadow font-13 col-md-12 border-d"
+                            data-ng-click="screenType='nparts'"
+                            data-ng-class="{true:'bg-blue',false:'bg-white'}[screenType==='nparts']"
+                            >1+n分屏
+                    </button>
+
+                    <div class="col-md-12" style="padding: 0">
+                        <div class="box-border" data-ng-show="screenType==='single'">
+                            <h5 class="bg-grey padding-10" style="text-align:center">单分屏说明</h5>
+
+                            <p class="padding-10 font-20" style="margin: 0">单分屏轮询，选择参加轮询的会议室，拖拽指定顺序，轮询时按顺序轮询。</p>
+                        </div>
+                        <div class="box-border" data-ng-show="screenType==='quarter'">
+                            <h5 class="bg-grey padding-10" style="text-align:center">四分屏说明</h5>
+
+                            <p class="padding-10 font-20" style="margin: 0">四分屏轮询，选择参加轮询的会议室，拖拽指定顺序，轮询时按4个会议室一组轮询。</p>
+                        </div>
+                        <div class="box-border" data-ng-show="screenType==='nparts'">
+                            <h5 class="bg-grey padding-10" style="text-align:center">1+n分屏说明</h5>
+
+                            <p class="padding-10 font-20" style="margin: 0">
+                                1+N分屏轮询，先选择具体的分屏形式，然后指定主屏的会议室及顺序，并指定小屏的会议室显示,启动轮询后主屏的会议室将会依顺序轮询。</p>
+                        </div>
+                    </div>
+
+                </div>
+                -->
+                <div class="col-md-offset-1 col-md-10" data-ng-hide="pollType==='main' &amp;&amp; screenType==='nparts'">
+                    <!--<div data-ng-hide="pollType==='main' && screenType==='nparts'"
+                         data-ng-class="{'col-md-9': pollType==='main' , 'col-md-offset-1 col-md-10': pollType==='global'}">-->
+                    <ul class="feeds">
+
+                        <li class="bg-grey padding-10" style="    margin-bottom: 7px;">
+                            <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                                会议室(17)
+                            </div>
+                            <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                                <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                    <input type="checkbox" ng-model="allCheckbox" ng-checked="isAllChecked" ng-click="clickAllCheck()" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul ng-sortable="sortableConf" class="feeds margin-bottom-10 ng-isolate-scope">
+                        <!-- ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            SkyTech_SH_10_2
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海奥曲肽会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            福州会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            张泉凯
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海赛增水剂会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            4445
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            BJN6-7-LAN CANG RIVER
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海东方明珠会议室MX800D
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海11楼会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            宁波会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海金赛增会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            长春五楼会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海金赛增会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海11楼小会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            童欢会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            上海曲普瑞林会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList --><li ng-repeat="pollingRoom in pollingRoomList" style="margin:0;cursor: move" class="ng-scope">
+                        <div class="col-md-8 col-lg-8 col-xs-8 col-sm-8 padding-left ng-binding">
+                            长春3楼会议室
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline" style="margin-bottom: 0;position: absolute">
+                                <input type="checkbox" ng-model="$parent.oneCheckboxList[pollingRoom.attendeeId]" ng-click="clickCheckbox(pollingRoom,$event)" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </li><!-- end ngRepeat: pollingRoom in pollingRoomList -->
+                    </ul>
+                </div>
+            </div><!-- end ngIf: !currentPollingRoom -->
+            </div>
+        </form>
+        <div class="modal-footer ng-scope" style="padding-top: 0">
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5"><span class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-4 col-md-4 col-sm-4 col-xs-4 ng-hide" data-ng-show="currentPollingRoom" style="color: #e73d4a;line-height: 26px;    visibility: hidden;">正在轮询：</span><span class="col-lg-6 col-md-6 col-sm-6 col-xs-6 ng-binding ng-hide" style="color: #e73d4a;line-height: 26px" data-ng-show="isPolling"></span></div>
+                <button class="btn blue col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1 col-sm-4 col-xs-offset-1 col-xs-4 ng-binding stratLx" type="button" ng-click="ok()" ng-disabled="!isPolling &amp;&amp; ((pollType==='main' &amp;&amp; checkedIdList.length < 2) || (pollType==='global' &amp;&amp; checkedIdList.length < 3))">
+                    开始轮询
+                </button>
+            </div>
+        </div>
+    </div></div>
+</div>
+
+<!--字幕弹框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in zimual" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog "><div class="modal-content" uib-modal-transclude=""><div class="modal-header ng-scope">
+        <i class="fa fa-times pull-right close-right" ng-click="cancel()" style="cursor: pointer"></i>
+        <h4 class="modal-title">发送字幕</h4>
+    </div>
+        <form class="form-horizontal ng-pristine ng-scope ng-invalid ng-invalid-required" name="call_room_form">
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">字幕：</label>
+
+                    <div class="col-md-7">
+                        <input type="text" ng-model="message" name="message" id="message" class="form-control border_bom ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" placeholder="请输入字幕" required="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">持续时间：</label>
+
+                    <div class="col-md-7">
+                        <select ng-model="duration" name="duration" id="duration" class="form-control border_bom ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required" ng-options="x for (x,y) in durationList" required=""><option label="2秒" value="number:2">2秒</option><option label="5秒" value="number:5" selected="selected">5秒</option><option label="10秒" value="number:10">10秒</option><option label="15秒" value="number:15">15秒</option><option label="20秒" value="number:20">20秒</option><option label="25秒" value="number:25">25秒</option><option label="30秒" value="number:30">30秒</option><option label="永久" value="number:0">永久</option></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">位置：</label>
+
+                    <div class="col-md-7">
+                        <select ng-model="position" name="position" id="position" class="form-control border_bom ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required" ng-options="x for (x,y) in positionList" required=""><option label="顶部" value="string:top" selected="selected">顶部</option><option label="中间" value="string:middle">中间</option><option label="底部" value="string:bottom">底部</option></select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn blue btn_shadow col-md-offset-2 col-md-8 sendZm" type="button" ng-click="ok()">发送字幕</button>
+            </div>
+        </form></div></div>
+</div>
+
+<!--延时弹出框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in yanshial" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog "><div class="modal-content" uib-modal-transclude=""><div class="modal-header ng-scope" style="margin-top: 200px">
+        <i class="fa fa-times pull-right close-right" ng-click="cancel()" style="cursor: pointer"></i>
+        <h4 class="modal-title" style="font-size: 14px">选择延时时间</h4>
+    </div>
+        <div class="modal-body ng-scope">
+            <div class="form-group">
+                <label class="control-label col-md-3 text-right" style="margin-top: 10px">延迟时间：</label>
+
+                <div class="col-md-5">
+                    <input type="number" ng-model="delayTime" name="delayTime" id="delayTime" class="form-control border_bom ng-dirty ng-valid-number ng-empty ng-invalid ng-invalid-required ng-touched" placeholder="请输入延迟时间(1-30)" required="">
+                </div>
+                <div class="col-md-2" style="margin-top: 10px">分钟</div>
+            </div>
+        </div>
+
+        <div class="modal-footer ng-scope">
+            <button class="btn blue btn_shadow queding1" data-ng-class="{true:'disabled'}[delayTime <= 0 || delayTime > 30]" type="button" ng-click="ok()">确定</button>
+            <button class="btn grey btn_shadow quxiao" type="button" ng-click="cancel()">取消</button>
+        </div></div></div>
+</div>
+
+<!--结束弹出框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in jieshual" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" size="sm" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog modal-sm"><div class="modal-content" uib-modal-transclude=""><div class="modal-header ng-scope">
+        <h4 class="modal-title">提示</h4>
+    </div>
+        <div class="modal-body ng-scope">
+            确定结束会议
+        </div>
+        <div class="modal-footer ng-scope">
+            <button class="btn blue btn_shadow queding" type="button" ng-click="ok()">确定</button>
+            <button class="btn grey btn_shadow quxiao" type="button" ng-click="cancel()">取消</button>
+        </div></div></div>
+</div>
+
+<!--加入会议 + 弹出框-->
+<div modal-render="true" tabindex="-1" role="dialog" class="modal fade ng-isolate-scope in hujiaoal" uib-modal-animation-class="fade" modal-in-class="in" ng-style="{'z-index': 1050 + index*10, display: 'block'}" uib-modal-window="modal-window" index="0" animate="animate" modal-animation="true" style="z-index: 1050; display: none;">
+    <div class="modal-dialog "><div class="modal-content" uib-modal-transclude="">
+        <!--<div class="loading_box ng-scope ng-hide" data-ng-show="callroomwaiting">-->
+            <!--<div class="loading">-->
+                <!--<p>请稍等...</p>-->
+                <!--<span></span>-->
+                <!--<span></span>-->
+                <!--<span></span>-->
+                <!--<span></span>-->
+                <!--<span></span>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="modal-header ng-scope">
+            <i class="fa fa-times pull-right close-right" ng-click="cancel()" style="cursor: pointer"></i>
+            <h4 class="modal-title">外部会议室</h4>
+        </div>
+        <form class="form-horizontal ng-pristine ng-scope ng-invalid ng-invalid-required" name="call_room_form">
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">呼叫地址</label>
+
+                    <div class="col-md-6">
+                        <input type="text" ng-model="callRoomAddress" name="callRoomAddress" id="callRoomAddress" class="form-control border_bom ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" placeholder="请输入呼叫地址（必填）" required="">
+                    </div>
+                </div>
+
+                <div class="form-group" data-ng-show="mcuType === 'ACANO'">
+                    <label class="control-label col-md-3">带宽设置</label>
+
+                    <div class="col-md-6">
+                        <select ng-model="addRoomBandwidth" name="addRoomBandwidth" id="addRoomBandwidth" class="form-control border_bom ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required" ng-options="x for (x,y) in bandwidthList" required=""><option label="默认" value="string:UNSPECIFIED" selected="selected">默认</option><option label="512kb" value="string:_512K">512kb</option><option label="768kb" value="string:_768K">768kb</option><option label="1.00M" value="string:_1000K">1.00M</option><option label="1.50M" value="string:_1500K">1.50M</option><option label="2.00M" value="string:_2M">2.00M</option><option label="3.00M" value="string:_3M">3.00M</option><option label="4.00M" value="string:_4M">4.00M</option><option label="6.00M" value="string:_6M">6.00M</option><option label="8.00M" value="string:_8M">8.00M</option><option label="10.00M" value="string:_10M">10.00M</option><option label="15.00M" value="string:_15M">15.00M</option><option label="20.00M" value="string:_20M">20.00M</option><option label="30.00M" value="string:_30M">30.00M</option></select>
+                    </div>
+                </div>
+
+                <div class="form-group" data-ng-show="mcuType === 'ACANO'">
+                    <label class="control-label col-md-3">双流模式</label>
+
+                    <div class="col-md-6">
+                        <select ng-model="addDualmode" name="addDualmode" id="addDualmode" class="form-control border_bom ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required" ng-options="x for (x,y) in dualmodeList" required=""><option label="双流" value="string:dualStream" selected="selected">双流</option><option label="单流" value="string:singleStream">单流</option></select>
+                    </div>
+                </div>
+
+                <!--
+                <div class="form-group" data-ng-show="mcuType === 'CISCO_CONDUCTOR'">
+                    <label class="control-label col-md-3">外呼协议</label>
+
+                    <div class="col-md-6">
+                        <select ng-model="addProtocol" name="addProtocol" id="addProtocol"
+                                class="form-control border_bom" ng-options="x for (x,y) in protocolList" required></select>
+                    </div>
+                </div>
+                -->
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn blue btn_shadow col-md-offset-2 col-md-8 hujiao" type="button" ng-click="ok()">呼叫</button>
+            </div>
+        </form></div></div>
+</div>
+
+<script>
+    $(".meetOp").click(function(){
+        $("#page1").addClass("in");
+        $("#page2").removeClass("in");
+        $("#page3").removeClass("in");
+        $("#page1").css("height","auto");
+    });
+
+    $(".meetMessage").click(function(){
+       $("#page2").addClass("in");
+       $("#page1").removeClass("in");
+       $("#page3").removeClass("in");
+       $("#page2").css("height","auto");
+    });
+    $(".meetJoin").click(function(){
+        $("#page3").addClass("in");
+        $("#page1").removeClass("in");
+        $("#page2").removeClass("in");
+        $("#page3").css("height","auto");
+    });
+
+    // 点击列表内的phone弹框
+    $(".only-phone").click(function(){
+        Toastr.success('开始连接成功!');
+    });
+
+    // 删除logo的弹出层
+    $(".fa-trash-o").click(function(){
+        $(".ui-popup").css("display","block");
+    });
+
+    $(".bg_close").click(function(){
+        $(".ui-popup").css("display","none");
+    });
+
+    $(".bg_color").click(function(){
+        $(".ui-popup").css("display","none");
+    });
+
+    $(".bg_quxiao").click(function(){
+        $(".ui-popup").css("display","none");
+    });
+
+    // 点击解锁
+        $('.jiesuo').on("click",function(){
+            var $this = $(this);
+            if($this.hasClass("fa-unlock-alt")){
+                $this.addClass("fa-lock").removeClass("fa-unlock-alt");
+                $(".jsText").html("已锁定");
+
+                Toastr.success('锁定成功');
+
+            }else if(!$this.hasClass("fa-unlock-alt")){
+                $this.addClass("fa-unlock-alt").removeClass("fa-lock");
+                $(".jsText").html("已解锁");
+
+                Toastr.success('解锁成功');
+            }
+        });
+
+
+    // 点击分屏icon的弹出框
+    $(".split").click(function(){
+        $(".fenping").css("display","block");
+    });
+    // 点击叉号隐藏弹出层
+    $(".close-right").click(function(){
+        $(".fenping").css("display","none");
+    });
+    // 点击图片
+    $("#modal-body img").click(function(){
+        $(".fenping").css("display","none");
+        Toastr.success('全局分屏设置成功');
+
+    });
+
+    // 轮询icon的弹出框
+    $(".lunxun").click(function(){
+        $(".modal1").css("display","block");
+    });
+    $(".stratLx").click(function(){
+        $(".modal1").css("display","none");
+        Toastr.success('开始轮询成功');
+    });
+    $(".close-right").click(function(){
+        $(".modal1").css("display","none");
+    });
+
+    // 字幕icon的弹出框
+    $(".zimu").click(function(){
+        $(".zimual").css("display","block");
+    });
+    $(".sendZm").click(function(){
+        $(".zimual").css("display","none");
+        Toastr.success('发送弹幕成功');
+    });
+    $(".close-right").click(function(){
+        $(".zimual").css("display","none");
+    });
+
+    // 延时icon的弹出框
+    $(".yanshi").click(function(){
+        $(".yanshial").css("display","block");
+    });
+    $(".queding1").click(function(){
+        $(".yanshial").css("display","none");
+        Toastr.success('延时时间设置成功');
+    });
+    $(".quxiao").click(function(){
+        $(".yanshial").css("display","none");
+    });
+    $(".close-right").click(function(){
+        $(".yanshial").css("display","none");
+    });
+
+    // 结束icon的弹出框
+    $(".jieshu").click(function(){
+       $(".jieshual").css("display","block");
+    });
+    $(".queding").click(function(){
+        $(".jieshual").css("display","none");
+    });
+    $(".quxiao").click(function(){
+        $(".jieshual").css("display","none");
+    });
+
+    // 加入会议弹框
+    $(".waihu").click(function(){
+        $(".hujiaoal").css("display","block");
+    });
+    $(".hujiao").click(function(){
+        $(".hujiaoal").css("display","none");
+    });
+    $(".close-right").click(function(){
+        $(".hujiaoal").css("display","none");
+    });
+
+
+
+    $(".quanlian").click(function(){
+
+        Toastr.success('全连成功');
+    });
+    $(".quanduan").click(function(){
+        Toastr.success('全部挂断成功');
+    });
+    $(".kaimai").click(function(){
+
+        Toastr.success('全部取消静音成功');
+    });
+    $(".jinmai").click(function(){
+
+        Toastr.success('全部静音成功');
+    });
+
+</script>
+
