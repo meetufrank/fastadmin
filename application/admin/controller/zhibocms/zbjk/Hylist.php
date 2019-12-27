@@ -61,19 +61,22 @@ class Hylist extends Backend
                     'between',
                     [strtotime('-6 hours'),strtotime('+7 days')]
                 ]
+              
             ];
+     
             $total = $this->model
                     ->with(['mcu','channel'])
                     ->where($where)
                     ->where($map)
+                    ->where('stop_time','exp','= delete_time')
                     ->order($sort, $order)
-
                     ->count();
 
             $list = $this->model
                     ->with(['mcu','channel'])
                     ->where($where)
                     ->where($map)
+                    ->where('stop_time','exp',' = delete_time')
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
