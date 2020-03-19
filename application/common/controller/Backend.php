@@ -10,6 +10,7 @@ use think\Lang;
 use think\Loader;
 use think\Session;
 use fast\Tree;
+use think\Validate;
 
 /**
  * 后台控制器基类
@@ -201,7 +202,6 @@ class Backend extends Controller
             'jsname'         => 'backend/' . str_replace('.', '/', $controllername),
             'moduleurl'      => rtrim(url("/{$modulename}", '', false), '/'),
             'language'       => $lang,
-            'fastadmin'      => Config::get('fastadmin'),
             'referer'        => Session::get("referer")
         ];
         $config = array_merge($config, Config::get("view_replace_str"));
@@ -228,6 +228,7 @@ class Backend extends Controller
      */
     protected function loadlang($name)
     {
+        $name =  Loader::parseName($name);
         Lang::load(APP_PATH . $this->request->module() . '/lang/' . $this->request->langset() . '/' . str_replace('.', '/', $name) . '.php');
     }
 
@@ -266,6 +267,7 @@ class Backend extends Controller
         if ($relationSearch) {
             if (!empty($this->model)) {
                 $name = \think\Loader::parseName(basename(str_replace('\\', '/', get_class($this->model))));
+                $name = $this->model->getTable();
                 $tableName = $name . '.';
             }
             $sortArr = explode(',', $sort);
@@ -450,6 +452,7 @@ class Backend extends Controller
         //如果有primaryvalue,说明当前是初始化传值
         if ($primaryvalue !== null) {
             $where = [$primarykey => ['in', $primaryvalue]];
+            $pagesize = 99999;
         } else {
             $where = function ($query) use ($word, $andor, $field, $searchfield, $custom) {
                 $logic = $andor == 'AND' ? '&' : '|';
@@ -491,7 +494,7 @@ class Backend extends Controller
                     'pid'       => isset($item['pid']) ? $item['pid'] : 0
                 ];
             }
-            if ($istree) {
+            if ($istree && !$primaryvalue) {
                 $tree = Tree::instance();
                 $tree->init(collection($list)->toArray(), 'pid');
                 $list = $tree->getTreeList($tree->getTreeArray(0), $field);
@@ -505,5 +508,21 @@ class Backend extends Controller
         }
         //这里一定要返回有list这个字段,total是可选的,如果total<=list的数量,则会隐藏分页按钮
         return json(['list' => $list, 'total' => $total]);
+    }
+
+    /**
+     * 刷新Token
+     */
+    protected function token()
+    {
+        $token = $this->request->post('__token__');
+
+        //验证Token
+        if (!Validate::is($token, "token", ['__token__' => $token])) {
+            $this->error(__('Token verification error'), '', ['__token__' => $this->request->token()]);
+        }
+
+        //刷新Token
+        $this->request->token();
     }
 }

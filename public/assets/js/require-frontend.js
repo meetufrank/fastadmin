@@ -33,6 +33,7 @@ require.config({
         'bootstrap-table-export': '../libs/bootstrap-table/dist/extensions/export/bootstrap-table-export.min',
         'bootstrap-table-mobile': '../libs/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile',
         'bootstrap-table-lang': '../libs/bootstrap-table/dist/locale/bootstrap-table-zh-CN',
+        'bootstrap-table-jumpto': '../libs/bootstrap-table/dist/extensions/page-jumpto/bootstrap-table-jumpto',
         'tableexport': '../libs/tableExport.jquery.plugin/tableExport.min',
         'dragsort': '../libs/fastadmin-dragsort/jquery.dragsort',
         'sortable': '../libs/Sortable/Sortable.min',
@@ -86,6 +87,10 @@ require.config({
             deps: ['bootstrap-table', 'template'],
             exports: '$.fn.bootstrapTable.defaults'
         },
+        'bootstrap-table-jumpto': {
+            deps: ['bootstrap-table'],
+            exports: '$.fn.bootstrapTable.defaults'
+        },
         'tableexport': {
             deps: ['jquery'],
             exports: '$.fn.extend'
@@ -98,6 +103,9 @@ require.config({
             deps: ['bootstrap', 'slimscroll'],
             exports: '$.AdminLTE'
         },
+        'bootstrap-daterangepicker': [
+            'moment/locale/zh-cn'
+        ],
         'bootstrap-datetimepicker': [
             'moment/locale/zh-cn',
 //            'css!../libs/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',

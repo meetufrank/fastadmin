@@ -10,7 +10,7 @@ use think\Cache;
 /**
  * 规则管理
  *
- * @icon fa fa-list
+ * @icon   fa fa-list
  * @remark 规则通常对应一个控制器的方法,同时左侧的菜单栏数据也从规则中体现,通常建议通过控制台进行生成规则节点
  */
 class Rule extends Backend
@@ -26,12 +26,14 @@ class Rule extends Backend
     public function _initialize()
     {
         parent::_initialize();
+        if (!$this->auth->isSuperAdmin()) {
+            $this->error(__('Access is allowed only to the super management group'));
+        }
         $this->model = model('AuthRule');
         // 必须将结果集转换为数组
-        $ruleList = collection($this->model->order('weigh', 'desc')->order('id', 'asc')->select())->toArray();
+        $ruleList = collection($this->model->field('condition,remark,createtime,updatetime', true)->order('weigh DESC,id ASC')->select())->toArray();
         foreach ($ruleList as $k => &$v) {
             $v['title'] = __($v['title']);
-            $v['remark'] = __($v['remark']);
         }
         unset($v);
         Tree::instance()->init($ruleList);
@@ -69,6 +71,7 @@ class Rule extends Backend
     public function add()
     {
         if ($this->request->isPost()) {
+            $this->token();
             $params = $this->request->post("row/a", [], 'strip_tags');
             if ($params) {
                 if (!$params['ismenu'] && !$params['pid']) {
@@ -96,6 +99,7 @@ class Rule extends Backend
             $this->error(__('No Results were found'));
         }
         if ($this->request->isPost()) {
+            $this->token();
             $params = $this->request->post("row/a", [], 'strip_tags');
             if ($params) {
                 if (!$params['ismenu'] && !$params['pid']) {
