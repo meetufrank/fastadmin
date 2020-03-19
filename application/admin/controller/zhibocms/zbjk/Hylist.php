@@ -24,6 +24,7 @@ class Hylist extends Backend
     {
         parent::_initialize();
         $this->model = new \app\admin\model\zhibocms\zbjk\Hylist;
+        $this->chmodel = new \app\admin\model\zhibocms\zbjk\ChWelist;
        
     }
     
@@ -63,13 +64,13 @@ class Hylist extends Backend
                 ]
               
             ];
-     
+           $sort='start_time asc';
             $total = $this->model
                     ->with(['mcu','channel'])
                     ->where($where)
                     ->where($map)
                     ->where('stop_time','exp','= delete_time')
-                    ->order($sort, $order)
+                    ->order($sort)
                     ->count();
 
             $list = $this->model
@@ -77,17 +78,27 @@ class Hylist extends Backend
                     ->where($where)
                     ->where($map)
                     ->where('stop_time','exp',' = delete_time')
-                    ->order($sort, $order)
+                    ->order($sort)
                     ->limit($offset, $limit)
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','cloud_id','starttime_text','stoptime_text','channel.channel_name']);
+                $row->visible(['id','cloud_id','join_url','host_url','hostkey','starttime_text','stoptime_text','channel.channel_name','channel.play_url','channel.pushurl','channel.id']);
                 
             }
             
             $list = collection($list)->toArray();
-           
+            foreach ($list as $key => $value) {
+                $chmap=[
+                     'ch_welist.channels_id'=>$value['channel']['id']
+                     ];
+                  $info=$this->chmodel
+                          ->with('webex')
+                          ->where($chmap)->find()->toArray();
+                  $list[$key]['webexinfo']=$info;
+            }
+            
+     
             $result = array("total" => $total, "rows" => $list);
 
             return json($result);
