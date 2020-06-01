@@ -75,6 +75,16 @@
                             <label for="password" class="control-label">{:__('Password')}:</label>
                             <input type="password" class="form-control" id="password" placeholder="{:__('Leave password blank if dont want to change')}" autocomplete="new-password" name="row[password]" value="" data-rule="password"/>
                         </div>
+                        {if condition="$issuper neq ''"}
+                        <div class="form-group">
+                            <label class="control-label">{:__('oprate company')}:</label>
+                            
+                                {:build_select('row[comid]', $super_comlist, $admin.comid, ['class'=>'form-control selectpicker', 'data-rule'=>'required'])}
+                           
+                        </div>
+                        {/if}
+                        
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">{:__('Submit')}</button>
                             <button type="reset" class="btn btn-default">{:__('Reset')}</button>

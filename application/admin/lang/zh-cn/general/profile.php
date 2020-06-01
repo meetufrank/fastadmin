@@ -10,4 +10,5 @@ return [
     'Please input correct email'                  => '请输入正确的Email地址',
     'Please input correct password'               => '密码长度不正确',
     'Email already exists'                        => '邮箱已经存在',
+    'oprate company'                               => '默认操作公司',
 ];

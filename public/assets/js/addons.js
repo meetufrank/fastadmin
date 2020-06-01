@@ -103,6 +103,16 @@ require(['../addons/bootstrapcontextmenu/js/bootstrap-contextmenu'], function (u
     });
 
 });
+require.config({
+    paths: {
+        'fullcalendar': '../addons/calendar/fullcalendar/dist/fullcalendar',
+        'fullcalendar-lang': '../addons/calendar/fullcalendar/dist/locale/zh-cn',
+    },
+    // shim依赖配置
+    shim: {
+        'fullcalendar-lang': ['fullcalendar']
+    }
+});
 if ($('.cropper', $('form[role="form"]')).length > 0) {
     var allowAttr = [
         'aspectRatio', 'autoCropArea', 'cropBoxMovable', 'cropBoxResizable', 'minCropBoxWidth', 'minCropBoxHeight', 'minContainerWidth', 'minContainerHeight',

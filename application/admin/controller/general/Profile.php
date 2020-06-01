@@ -16,6 +16,29 @@ use think\Validate;
 class Profile extends Backend
 {
 
+    public function _initialize()
+    {
+        parent::_initialize();
+        //新加
+        $this->authgroup =new \app\admin\model\AuthGroup;
+        $issuper=$this->auth->isSuperAdmin();
+        $this->view->assign("issuper", $issuper);
+        
+        //获取公司数组
+        $sgroup=$this->auth->getGroups();  
+        $ginfo= collection($this->authgroup
+            ->where('pid','in',$sgroup[0]['id'])
+            ->select())->toArray();
+        $comdata = [
+           0 => __('None')
+        ];
+        foreach ($ginfo as $k => &$v)
+        {
+
+            $comdata[$v['id']] = $v['name'];
+        }
+        $this->view->assign("super_comlist", $comdata);
+    }
     /**
      * 查看
      */
@@ -55,11 +78,14 @@ class Profile extends Backend
         if ($this->request->isPost()) {
             $this->token();
             $params = $this->request->post("row/a");
+            $comid=$params['comid'];
             $params = array_filter(array_intersect_key(
                 $params,
                 array_flip(array('email', 'nickname', 'password', 'avatar'))
             ));
             unset($v);
+            $params['comid']=$comid;
+          
             if (!Validate::is($params['email'], "email")) {
                 $this->error(__("Please input correct email"));
             }

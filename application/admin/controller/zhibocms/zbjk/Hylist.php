@@ -82,19 +82,20 @@ class Hylist extends Backend
                     ->limit($offset, $limit)
                     ->select();
 
-            foreach ($list as $row) {
+            foreach (@$list as $row) {
                 $row->visible(['id','cloud_id','join_url','host_url','hostkey','starttime_text','stoptime_text','channel.channel_name','channel.play_url','channel.pushurl','channel.id']);
                 
             }
-            
-            $list = collection($list)->toArray();
-            foreach ($list as $key => $value) {
+          
+           
+          $list = collection($list)->toArray();
+            foreach (@$list as $key => $value) {
                 $chmap=[
                      'ch_welist.channels_id'=>$value['channel']['id']
                      ];
                   $info=$this->chmodel
                           ->with('webex')
-                          ->where($chmap)->find()->toArray();
+                          ->where($chmap)->find();
                   $list[$key]['webexinfo']=$info;
             }
             

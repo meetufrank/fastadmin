@@ -15,7 +15,7 @@ use think\Validate;
 /**
  * 后台控制器基类
  */
-class Backend extends Controller
+class MeetBackend extends Controller
 {
 
     /**
@@ -115,7 +115,7 @@ class Backend extends Controller
     /**
      * 引入后台控制器的traits
      */
-    use \app\admin\library\traits\Backend;
+    use \app\admin\library\traits\MeetBackend;
 
     public function _initialize()
     {
@@ -224,21 +224,56 @@ class Backend extends Controller
         $this->assign('auth', $this->auth);
         //渲染管理员对象
         $this->assign('admin', Session::get('admin'));
+        
+        
+        $this->comauth();//公司数据鉴权
     }
     
     
     /*
-     * 超级数据不允许普通管理员查看
+     * 加入组权限显示判断(公司)
      */
-    public function superauth() {
+    public function comauth() {
         $this->authgroup =new \app\admin\model\AuthGroup;
         //鉴权是否超级管理员，获取操作公司
-        if(!$this->auth->isSuperAdmin()){
+        if($this->auth->isSuperAdmin()){
+            $uinfo=$this->auth->getUserInfo();
+            $comid=$uinfo['comid'];
+            if(empty($comid)){
+                $this->error('您是超级管理员，进行此操作需要设置默认操作公司');
+            }else{
+                $this->parent_id=$comid; 
+            }
             
-            $this->error('您无权查看内部资源');
-        }
+        }else{
+            
+      
+             $groups=$this->auth->getGroups();
+
+             $group=$groups[0];
+             $pid=$group['id'];  //当前组id
+             $this->parent_id=$this->findmaxparent($pid); //寻找最大公司父类id
+       
+          }
     }
-   
+    
+    
+    private function findmaxparent($pid) {
+        
+        $p_id=$this->authgroup
+                ->where(['id'=>$pid])
+                ->value('pid');
+            
+        if($p_id!=1){
+            
+            $pid=$this->findmaxparent($p_id);
+           
+        }
+        
+        return $pid;
+       
+        
+    }
 
     /**
      * 加载语言文件
@@ -280,7 +315,7 @@ class Backend extends Controller
         $filter = (array)json_decode($filter, true);
         $op = (array)json_decode($op, true);
         $filter = $filter ? $filter : [];
-        $where = [];
+        $where = []; 
         $tableName = '';
         if ($relationSearch) {
             if (!empty($this->model)) {
@@ -295,10 +330,11 @@ class Backend extends Controller
             unset($item);
             $sort = implode(',', $sortArr);
         }
+        $where[]=[$tableName.'uid', $this->parent_id];  //新加
         $adminIds = $this->getDataLimitAdminIds();
         if (is_array($adminIds)) {
             $where[] = [$tableName . $this->dataLimitField, 'in', $adminIds];
-        }
+        }   
         if ($search) {
             $searcharr = is_array($searchfields) ? $searchfields : explode(',', $searchfields);
             foreach ($searcharr as $k => &$v) {
@@ -389,7 +425,6 @@ class Backend extends Controller
                     break;
             }
         }
-        
         $where = function ($query) use ($where) {
             foreach ($where as $k => $v) {
                 if (is_array($v)) {

@@ -1,7 +1,7 @@
 <?php
 
 return array (
-  'name' => 'MeetManage',
+  'name' => '易播',
   'beian' => '',
   'cdnurl' => '',
   'version' => '1.0.1',

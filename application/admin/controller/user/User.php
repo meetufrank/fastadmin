@@ -38,7 +38,7 @@ class User extends Backend
             if ($this->request->request('keyField')) {
                 return $this->selectpage();
             }
-            print_r($this->buildparams());exit;
+            
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
                 ->with('group')
