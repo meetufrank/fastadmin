@@ -66,4 +66,7 @@ return array (
     '/third/connect/[:platform]' => 'third/index/connect',
     '/third/callback/[:platform]' => 'third/index/callback',
   ),
+  'priority' => 
+  array (
+  ),
 );
