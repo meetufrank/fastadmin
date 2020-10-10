@@ -4,6 +4,19 @@ return array (
   'autoload' => false,
   'hooks' => 
   array (
+    'app_init' => 
+    array (
+      0 => 'alioss',
+      1 => 'epay',
+    ),
+    'upload_config_init' => 
+    array (
+      0 => 'alioss',
+    ),
+    'upload_delete' => 
+    array (
+      0 => 'alioss',
+    ),
     'sms_send' => 
     array (
       0 => 'clsms',
@@ -15,10 +28,6 @@ return array (
     'sms_check' => 
     array (
       0 => 'clsms',
-    ),
-    'app_init' => 
-    array (
-      0 => 'epay',
     ),
     'ems_send' => 
     array (

@@ -113,7 +113,7 @@ class Index extends Base
                 'log_id'=>$log_id ,  //主要判断字段
                 'is_pull'=>0,//是否添加拉流
                 'pull_url'=>'',
-                'calltype'=>'sip'
+                'calltype'=>'h323'
             ];
           
             $this->pullqueue('app\common\jobs\McuCall@sendlive', $queuedata, 'mcucall');
